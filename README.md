@@ -19,8 +19,11 @@ It runs an API server, an async worker, PostgreSQL, and Redis using Docker Compo
 Create a `.env` file in the project root with the following contents:
 
 PORT=3000
+
 DATABASE_URL=postgresql://postgres:postgres@signals_postgres:5432/signals_db
+
 REDIS_URL=redis://signals_redis:6379
+
 JWT_SECRET=super-secret-key
 
 ---
