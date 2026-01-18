@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: signals_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7
+    container_name: signals_redis
+    ports:
+      - "6379:6379"
+  api:
+    build: .
+    container_name: signals_api
+    command: sh -c "npx prisma migrate deploy && npx prisma db seed && npm start"
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - redis
+  worker:
+    build: .
+    container_name: signals_worker
+    command: npm run worker
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  pg_data:
